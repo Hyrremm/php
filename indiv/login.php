@@ -1,8 +1,25 @@
-<?php 
-include 'services/DataService.php';
-$dataService = new DataService();
+<?php
+ob_start();
+require_once 'DataService.php';
 
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    $dataService = DataService::getInstance();
+
+    $user = $dataService->loginUser($username, $password);
+
+    if ($user) {
+        setcookie('logged_in', $username, time() + (86400 * 30), "/"); 
+        echo "<script>window.location.href = '/';</script>";
+        exit();
+    } else {
+        echo "Login failed. Please check your username and password.";
+    }
+}
 ?>
+
 
 <!DOCTYPE html>
 <html>

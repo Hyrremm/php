@@ -1,3 +1,24 @@
+<?php
+require_once 'DataService.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST["username"];
+    $password = $_POST["password"];
+    $confirm_password = $_POST["confirm_password"];
+
+    if ($password !== $confirm_password) {
+        echo "Error: Passwords do not match";
+        exit;
+    }
+
+    $dataService = DataService::getInstance();
+
+    $dataService->registerUser($username, $password);
+    echo '<script>window.location.href = "login.php";</script>';
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
