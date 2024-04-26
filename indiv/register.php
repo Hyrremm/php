@@ -1,6 +1,9 @@
 <?php
 require_once 'DataService.php';
 
+/**
+ * Обработчик регистрации пользователя.
+ */
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST["username"];
     $password = $_POST["password"];
@@ -22,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Registration Page</title>
+    <title>Страница регистрации</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -83,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
     </div>
     <a href="/login.php" class="login-button">
-        Login
+        Вход
     </a>
 </body>
 </html>

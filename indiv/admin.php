@@ -3,6 +3,9 @@ session_start();
 
 require_once 'DataService.php';
 
+/**
+ * Обработчик административных действий.
+ */
 if(isset($_SESSION['admin']) && $_SESSION['admin'] === true) {
     echo "<h1>Hello admin</h1>";
     $dataService = DataService::getInstance();

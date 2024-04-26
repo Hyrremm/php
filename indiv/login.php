@@ -1,8 +1,10 @@
 <?php
-ob_start();
+/**
+ * PHP-скрипт для отображения личной страницы пользователя.
+ *
+ */
 require_once 'DataService.php';
 
-// Start session
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -12,9 +14,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $dataService = DataService::getInstance();
 
     $user = $dataService->loginUser($username, $password);
-if ($dataService->checkUserRole($username)) {
-            $_SESSION['admin'] = true;
-        }
+    if ($dataService->checkUserRole($username)) {
+        $_SESSION['admin'] = true;
+    }
     if ($user) {
         $_SESSION['logged_in'] = $username;
         if ($dataService->checkUserRole($username)) {
@@ -31,7 +33,7 @@ if ($dataService->checkUserRole($username)) {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login Page</title>
+    <title>Страница входа</title>
     <style>
         body {
             font-family: Arial, sans-serif;
