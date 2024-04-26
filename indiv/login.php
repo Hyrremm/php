@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($dataService->checkUserRole($username)) {
             $_SESSION['admin'] = true;
         }
-        echo "<script>window.location.href = '/';</script>";
+        header('Location: /');
         exit();
     } else {
         echo "Login failed. Please check your username and password.";
