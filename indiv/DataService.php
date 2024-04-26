@@ -40,7 +40,25 @@ class DataService {
             die("Error in SQL query: " . $e->getMessage());
         }
     }
-
+    public function checkUserRole($username) {
+        $sql = "SELECT role FROM users WHERE login = :username";
+    
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':username', $username);
+            $stmt->execute();
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+            if ($user && $user['role'] === 'admin') {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (PDOException $e) {
+            die("Error in SQL query: " . $e->getMessage());
+        }
+    }
+    
     public function loginUser($username, $password) {
         $sql = "SELECT * FROM users WHERE login = :username";
 
@@ -52,14 +70,11 @@ class DataService {
 
             if ($user) {
                 if (password_verify($password, $user['password'])) {
-                    // echo "Login successful"; // Commenting out the echo for cleaner output
                     return $user;
                 } else {
-                    // echo "Incorrect password"; // Commenting out the echo for cleaner output
                     return false;
                 }
             } else {
-                // echo "User not found"; // Commenting out the echo for cleaner output
                 return false;
             }
         } catch (PDOException $e) {
@@ -116,6 +131,68 @@ class DataService {
             $stmt_posts->execute();
             $user_posts = $stmt_posts->fetchAll(PDO::FETCH_ASSOC);
             return $user_posts;
+        } catch (PDOException $e) {
+            die("Error in SQL query: " . $e->getMessage());
+        }
+    }
+    public function deleteUser($username) {
+        $this->pdo->beginTransaction(); 
+    
+        try {
+            $sql_delete_posts = "DELETE FROM posts WHERE user_id = (SELECT id FROM users WHERE login = :username)";
+            $stmt_delete_posts = $this->pdo->prepare($sql_delete_posts);
+            $stmt_delete_posts->bindParam(':username', $username);
+            $stmt_delete_posts->execute();
+    
+            $sql_delete_user = "DELETE FROM users WHERE login = :username";
+            $stmt_delete_user = $this->pdo->prepare($sql_delete_user);
+            $stmt_delete_user->bindParam(':username', $username);
+            $stmt_delete_user->execute();
+    
+            $this->pdo->commit();
+            return true;
+        } catch (PDOException $e) {
+            $this->pdo->rollback();
+            die("Error in SQL query: " . $e->getMessage());
+        }
+    }
+    public function checkUserExists($username) {
+        $sql = "SELECT COUNT(*) FROM users WHERE login = :username";
+    
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':username', $username);
+            $stmt->execute();
+            $count = $stmt->fetchColumn();
+            return $count > 0; // If count is greater than 0, user exists
+        } catch (PDOException $e) {
+            die("Error in SQL query: " . $e->getMessage());
+        }
+    }
+    
+    public function deletePost($post_id) {
+        $sql_delete_post = "DELETE FROM posts WHERE post_id = :post_id";
+        
+        try {
+            $stmt_delete_post = $this->pdo->prepare($sql_delete_post);
+            $stmt_delete_post->bindParam(':post_id', $post_id);
+            $stmt_delete_post->execute();
+            return true;
+        } catch (PDOException $e) {
+            die("Error in SQL query: " . $e->getMessage());
+        }
+    }
+    
+    public function createAdminUser($username, $password) {
+        $password_hash = password_hash($password, PASSWORD_DEFAULT);
+        $sql = "INSERT INTO users (login, password, role) VALUES (:username, :password, 'admin')";
+    
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->bindParam(':username', $username);
+            $stmt->bindParam(':password', $password_hash);
+            $stmt->execute();
+            return true;
         } catch (PDOException $e) {
             die("Error in SQL query: " . $e->getMessage());
         }

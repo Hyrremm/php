@@ -2,6 +2,9 @@
 ob_start();
 require_once 'DataService.php';
 
+// Start session
+session_start();
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['username'];
     $password = $_POST['password'];
@@ -9,9 +12,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $dataService = DataService::getInstance();
 
     $user = $dataService->loginUser($username, $password);
-
+if ($dataService->checkUserRole($username)) {
+            $_SESSION['admin'] = true;
+        }
     if ($user) {
-        setcookie('logged_in', $username, time() + (86400 * 30), "/"); 
+        $_SESSION['logged_in'] = $username;
+        if ($dataService->checkUserRole($username)) {
+            $_SESSION['admin'] = true;
+        }
         echo "<script>window.location.href = '/';</script>";
         exit();
     } else {
@@ -19,7 +27,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html>
