@@ -55,7 +55,7 @@ if(isset($_SESSION['logged_in'])) {
     // Delete post functionality
     if(isset($_POST['delete_post']) && !$readOnly) {
         $post_id = $_POST['delete_post']; // corrected here
-        $dataService->deletePost( $post_id);
+        $dataService->deletePost($post_id);
     }
 
     if(isset($_POST['logout'])) {
@@ -101,7 +101,7 @@ if(isset($_SESSION['logged_in'])) {
                 color: #333;
             }
             form {
-                margin-bottom: 20px;
+                margin-top: 10px;
             }
             textarea {
                 width: 100%;
@@ -110,23 +110,33 @@ if(isset($_SESSION['logged_in'])) {
                 border-radius: 5px;
                 resize: vertical;
             }
-            input[type="submit"] {
+            input[type="submit"], .home-btn {
                 padding: 10px 20px;
                 background-color: #007bff;
                 color: #fff;
                 border: none;
                 border-radius: 5px;
                 cursor: pointer;
+                text-decoration: none;
+                display: inline-block;
+                margin-bottom: 10px;
             }
-            input[type="submit"]:hover {
+            input[type="submit"]:hover, .home-btn:hover {
                 background-color: #0056b3;
             }
             .post {
-                background-color: #fff;
-                padding: 15px;
-                margin-bottom: 10px;
-                border-radius: 5px;
-            }
+    background-color: #fff;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+.post-content {
+    white-space: pre-wrap; 
+}
+
             .delete-btn {
                 background-color: #dc3545;
                 color: #fff;
@@ -159,22 +169,22 @@ if(isset($_SESSION['logged_in'])) {
             <h2>Posts:</h2>
             <?php
             foreach($user_posts as $post) {
-                echo "<div class='post'>{$post['post_content']}";
+                echo "<div class='post'><div class='post-content'>{$post['post_content']}</div>";
 
 
                 // Display delete button for the post if on home page and post belongs to the logged-in user
                 if(!$readOnly && empty($path_components[1])) {
                     echo "<form method='post' action=''>
-                            <input type='hidden' name='delete_post' value='{$post['post_id']}'> <!-- corrected here -->
+                            <input type='hidden' name='delete_post' value='{$post['post_id']}'> 
                             <input type='submit' class='delete-btn' value='Delete'>
                           </form>";
                 }
                 echo "</div>";
             }
             ?>
-            <!-- Display home page link if on a user's page -->
+            <!-- Display home page link as a button -->
             <?php if($readOnly): ?>
-            <a href="/">Home Page</a>
+            <a href="/" class="home-btn">Home Page</a>
             <?php endif; ?>
         </div>
     </body>
