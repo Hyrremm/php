@@ -108,7 +108,6 @@ class DataService {
             die("Error in SQL query: " . $e->getMessage());
         }
     }
-
     public function getUserPosts($username) {
         $sql_user_id = "SELECT id FROM users WHERE login = :username";
     
@@ -124,7 +123,7 @@ class DataService {
     
             $user_id = $user['id'];
     
-            $sql_posts = "SELECT post_content FROM posts WHERE user_id = :user_id";
+            $sql_posts = "SELECT * FROM posts WHERE user_id = :user_id"; // Select all columns
     
             $stmt_posts = $this->pdo->prepare($sql_posts);
             $stmt_posts->bindParam(':user_id', $user_id);

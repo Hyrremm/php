@@ -52,6 +52,12 @@ if(isset($_SESSION['logged_in'])) {
         $dataService->addPostToUser($login, $post_content);
     }
 
+    // Delete post functionality
+    if(isset($_POST['delete_post']) && !$readOnly) {
+        $post_id = $_POST['delete_post']; // corrected here
+        $dataService->deletePost( $post_id);
+    }
+
     if(isset($_POST['logout'])) {
         session_unset();
         session_destroy();
@@ -121,6 +127,14 @@ if(isset($_SESSION['logged_in'])) {
                 margin-bottom: 10px;
                 border-radius: 5px;
             }
+            .delete-btn {
+                background-color: #dc3545;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                padding: 5px 10px;
+                cursor: pointer;
+            }
         </style>
     </head>
     <body>
@@ -145,7 +159,17 @@ if(isset($_SESSION['logged_in'])) {
             <h2>Posts:</h2>
             <?php
             foreach($user_posts as $post) {
-                echo "<div class='post'>{$post['post_content']}</div>";
+                echo "<div class='post'>{$post['post_content']}";
+
+
+                // Display delete button for the post if on home page and post belongs to the logged-in user
+                if(!$readOnly && empty($path_components[1])) {
+                    echo "<form method='post' action=''>
+                            <input type='hidden' name='delete_post' value='{$post['post_id']}'> <!-- corrected here -->
+                            <input type='submit' class='delete-btn' value='Delete'>
+                          </form>";
+                }
+                echo "</div>";
             }
             ?>
             <!-- Display home page link if on a user's page -->
